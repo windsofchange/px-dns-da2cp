@@ -58,11 +58,11 @@ sync_dns() {
         $DEBUG && echo "${exist}" >> $LOGFILE
     fi
 
-    result=$( bash_run "rsync -avz --chown=named:named --chmod=600 -e \"sshpass -p '${pass}' ssh -oStrictHostKeyChecking=no -p ${port}\" /var/named/${domain}.db root@${host}:/var/named" )
+    result=$( bash_run "rsync -avz -e \"sshpass -p '${pass}' ssh -oStrictHostKeyChecking=no -p ${port}\" /var/named/${domain}.db root@${host}:/var/named" )
     $DEBUG && echo "$(now) Sync dns zone ${domain}.db to ${host}" >> $LOGFILE
     $DEBUG && echo "$result" >> $LOGFILE
 
-    result=$( bash_run "sshpass -p \"${pass}\" ssh -oStrictHostKeyChecking=no -p ${port} root@${host} \"rndc reload ${domain} IN internal;rndc reload ${domain} IN external;rndc flushname ${domain}\"" )
+    result=$( bash_run "sshpass -p \"${pass}\" ssh -oStrictHostKeyChecking=no -p ${port} root@${host} \"/scripts/dnscluster syncall;rndc reload ${domain} IN internal;rndc reload ${domain} IN external;rndc flushname ${domain}\"" )
     $DEBUG && echo "$(now) Reload dns zone ${domain} on ${host}" >> $LOGFILE
     $DEBUG && echo "$result" >> $LOGFILE
 }
