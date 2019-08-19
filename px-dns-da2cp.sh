@@ -62,7 +62,7 @@ sync_dns() {
     $DEBUG && echo "$(now) Sync dns zone ${domain}.db to ${host}" >> $LOGFILE
     $DEBUG && echo "$result" >> $LOGFILE
 
-    result=$( bash_run "sshpass -p \"${pass}\" ssh -oStrictHostKeyChecking=no -p ${port} root@${host} \"/scripts/dnscluster syncall;rndc reload ${domain} IN internal;rndc reload ${domain} IN external;rndc flushname ${domain}\"" )
+    result=$( bash_run "sshpass -p \"${pass}\" ssh -oStrictHostKeyChecking=no -p ${port} root@${host} \"/scripts/dnscluster syncone ${domain};rndc reload ${domain} IN internal;rndc reload ${domain} IN external;rndc flushname ${domain}\"" )
     $DEBUG && echo "$(now) Reload dns zone ${domain} on ${host}" >> $LOGFILE
     $DEBUG && echo "$result" >> $LOGFILE
 }
